@@ -4,7 +4,19 @@ A modern, full-stack MERN (MongoDB, Express, React, Node.js) pizza ordering appl
 
 ## 🚀 Live Demo
 
-> **Note:** This is a portfolio project. For demo purposes, the live deployment links will be added once hosted on platforms like Vercel (Frontend) and Render (Backend).
+### 🌐 Deployed Application
+
+**Frontend:** https://pizza-ij1p4jyxd-dhaundiyalabhishek634-gmailcoms-projects.vercel.app
+
+**Backend API:** https://oib-sip.onrender.com
+
+**Test Credentials:**
+- **User:** `user@test.com` / `user123`
+- **Admin:** `admin@pizzaapp.com` / `admin123`
+
+> **Note:** The free tier backend on Render may take 30-60 seconds to wake up on first request if it's been inactive.
+
+---
 
 ### Deployment Options
 
@@ -19,12 +31,13 @@ A modern, full-stack MERN (MongoDB, Express, React, Node.js) pizza ordering appl
    - Click "Deploy with Vercel" button above
    - Connect your GitHub account
    - Select the `frontend` folder as root directory
-   - Add environment variable: `VITE_API_URL` (your backend URL)
+   - Add environment variable: `VITE_API_URL=https://oib-sip.onrender.com/api`
    - Deploy!
 
 2. **Backend on Render:**
    - Click "Deploy to Render" button above
    - Connect your GitHub account
+   - Set root directory: `backend`
    - Add environment variables from `.env.example`
    - Deploy!
 
