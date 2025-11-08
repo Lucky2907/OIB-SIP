@@ -39,7 +39,7 @@ exports.register = async (req, res) => {
       verificationTokenExpire: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
     });
 
-    // Send verification email (only if email is properly configured)
+    // Send verification email in background (non-blocking)
     const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
     const message = `
       <h1>Email Verification</h1>
@@ -48,35 +48,21 @@ exports.register = async (req, res) => {
       <p>This link will expire in 24 hours.</p>
     `;
 
-    try {
-      // Only send email if proper configuration exists
-      if (process.env.EMAIL_USER !== 'your_mailtrap_user' && process.env.EMAIL_PASS !== 'your_mailtrap_pass') {
-        await sendEmail({
-          email: user.email,
-          subject: 'Email Verification - Pizza App',
-          message
-        });
-        
-        res.status(201).json({
-          success: true,
-          message: 'User registered successfully. Please check your email for verification.'
-        });
-      } else {
-        // Development mode - email verification skipped
-        res.status(201).json({
-          success: true,
-          message: 'User registered successfully. Email verification skipped for development.',
-          note: 'User is automatically verified'
-        });
-      }
-    } catch (error) {
-      // If email fails, user is still created and verified for development
-      console.log('Email sending failed, but user is verified for development:', error.message);
-      
-      res.status(201).json({
-        success: true,
-        message: 'User registered successfully. Email verification skipped due to configuration.',
-        note: 'User is automatically verified'
+    // Send response immediately, don't wait for email
+    res.status(201).json({
+      success: true,
+      message: 'User registered successfully!',
+      note: 'User is automatically verified'
+    });
+
+    // Try to send email in background (non-blocking)
+    if (process.env.EMAIL_USER && process.env.EMAIL_USER !== 'your_mailtrap_user') {
+      sendEmail({
+        email: user.email,
+        subject: 'Email Verification - Pizza App',
+        message
+      }).catch(error => {
+        console.log('Background email sending failed (non-critical):', error.message);
       });
     }
   } catch (error) {
