@@ -20,6 +20,7 @@ import MyOrders from './pages/MyOrders.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import AdminInventory from './pages/AdminInventory.jsx';
 import AdminOrders from './pages/AdminOrders.jsx';
+import DiagnosticTest from './pages/DiagnosticTest.jsx';
 
 // Smart redirect based on auth status
 const HomeRedirect = () => {
@@ -64,6 +65,7 @@ function App() {
               <Route path="/forgot-password" element={<ForgotPassword />} />
               <Route path="/reset-password/:token" element={<ResetPassword />} />
               <Route path="/verify-email/:token" element={<VerifyEmail />} />
+              <Route path="/diagnostic" element={<DiagnosticTest />} />
               
               <Route
                 path="/dashboard"
