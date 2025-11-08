@@ -48,6 +48,7 @@ io.on('connection', (socket) => {
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/inventory', require('./routes/inventory'));
 app.use('/api/orders', require('./routes/orders'));
+app.use('/api/test', require('./routes/test'));
 
 // Health check route
 app.get('/', (req, res) => {

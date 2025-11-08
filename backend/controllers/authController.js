@@ -206,11 +206,16 @@ exports.forgotPassword = async (req, res) => {
 
       res.status(200).json({ success: true, message: 'Email sent' });
     } catch (error) {
+      console.error('Failed to send reset email:', error);
       user.resetPasswordToken = undefined;
       user.resetPasswordExpire = undefined;
       await user.save();
 
-      return res.status(500).json({ success: false, message: 'Error sending email' });
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Failed to send reset email. Please contact support or try again later.',
+        error: process.env.NODE_ENV === 'development' ? error.message : undefined
+      });
     }
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
