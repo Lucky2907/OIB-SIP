@@ -1,13 +1,17 @@
 import axios from 'axios';
 
-// Use production API URL by default, fallback to env variable, then localhost
-const API_URL = import.meta.env.VITE_API_URL || 
-                (import.meta.env.MODE === 'production' 
-                  ? 'https://oib-sip.onrender.com/api' 
-                  : 'http://localhost:5000/api');
+// Determine API URL with multiple fallbacks
+// Priority: 1. Env variable, 2. Production URL if not localhost, 3. localhost for dev
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const productionApiUrl = 'https://oib-sip.onrender.com/api';
+const devApiUrl = 'http://localhost:5000/api';
+
+const API_URL = import.meta.env.VITE_API_URL || (isLocalhost ? devApiUrl : productionApiUrl);
 
 console.log('🌐 API URL:', API_URL); // Debug log
 console.log('🔧 Environment:', import.meta.env.MODE);
+console.log('🏠 Hostname:', window.location.hostname);
+console.log('🌍 Is Localhost?', isLocalhost);
 
 const api = axios.create({
   baseURL: API_URL,
