@@ -80,7 +80,11 @@ app.get('/api/health', (req, res) => {
     message: 'Server is running',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
-    corsAllowed: 'All origins currently allowed for testing'
+    corsAllowed: 'All origins currently allowed for testing',
+    database: {
+      connected: require('mongoose').connection.readyState === 1,
+      state: ['disconnected', 'connected', 'connecting', 'disconnecting'][require('mongoose').connection.readyState]
+    }
   });
 });
 
