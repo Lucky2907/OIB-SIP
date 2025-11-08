@@ -1,0 +1,12 @@
+version: 1
+services:
+  - type: web
+    name: pizza-app-backend
+    env: node
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000

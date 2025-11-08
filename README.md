@@ -2,6 +2,38 @@
 
 A modern, full-stack MERN (MongoDB, Express, React, Node.js) pizza ordering application with beautiful UI/UX, custom pizza builder, Google Pay integration, and real-time order tracking.
 
+## 🚀 Live Demo
+
+> **Note:** This is a portfolio project. For demo purposes, the live deployment links will be added once hosted on platforms like Vercel (Frontend) and Render (Backend).
+
+### Deployment Options
+
+**Frontend (Vercel):**
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Lucky2907/OIB-SIP/tree/main/frontend)
+
+**Backend (Render):**
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/Lucky2907/OIB-SIP)
+
+**Quick Deploy Instructions:**
+1. **Frontend on Vercel:**
+   - Click "Deploy with Vercel" button above
+   - Connect your GitHub account
+   - Select the `frontend` folder as root directory
+   - Add environment variable: `VITE_API_URL` (your backend URL)
+   - Deploy!
+
+2. **Backend on Render:**
+   - Click "Deploy to Render" button above
+   - Connect your GitHub account
+   - Add environment variables from `.env.example`
+   - Deploy!
+
+3. **Database (MongoDB Atlas):**
+   - Already configured in the code
+   - Free tier: https://www.mongodb.com/cloud/atlas
+
+---
+
 ## ✨ Features
 
 ### 👤 User Features
@@ -570,30 +602,181 @@ This project is created for educational purposes.
 - Check CORS configuration
 - Verify frontend is connecting to correct backend URL
 
-## Testing
+## 🌐 Deployment Guide
 
-Run the included test scripts to verify functionality:
+### Deploy Frontend to Vercel
 
+1. **Prerequisites:**
+   - GitHub account
+   - Vercel account (free): https://vercel.com/signup
+
+2. **Steps:**
+   ```bash
+   # Install Vercel CLI (optional)
+   npm i -g vercel
+   
+   # Or use Vercel Dashboard
+   ```
+
+3. **Via Vercel Dashboard:**
+   - Go to https://vercel.com/new
+   - Import your GitHub repository: `Lucky2907/OIB-SIP`
+   - Framework Preset: **Vite**
+   - Root Directory: **frontend**
+   - Build Command: `npm run build`
+   - Output Directory: `dist`
+   - Environment Variables:
+     - `VITE_API_URL` = `https://your-backend-url.onrender.com/api`
+
+4. **Deploy:** Click "Deploy" and wait 1-2 minutes
+
+### Deploy Backend to Render
+
+1. **Prerequisites:**
+   - GitHub account
+   - Render account (free): https://render.com/register
+
+2. **Steps:**
+   - Go to https://dashboard.render.com/
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository: `Lucky2907/OIB-SIP`
+   - Configure:
+     - Name: `pizza-app-backend`
+     - Root Directory: `backend`
+     - Environment: `Node`
+     - Build Command: `npm install`
+     - Start Command: `node server.js`
+   
+3. **Environment Variables:**
+   Add these in Render dashboard:
+   ```
+   PORT=5000
+   MONGODB_URI=your_mongodb_atlas_connection_string
+   JWT_SECRET=your_secret_key
+   JWT_EXPIRE=7d
+   EMAIL_HOST=smtp.gmail.com
+   EMAIL_PORT=587
+   EMAIL_USER=your_email@gmail.com
+   EMAIL_PASSWORD=your_app_password
+   EMAIL_FROM=noreply@pizzaapp.com
+   ADMIN_EMAIL=admin@pizzaapp.com
+   FRONTEND_URL=https://your-vercel-app.vercel.app
+   ```
+
+4. **Deploy:** Click "Create Web Service"
+
+### Alternative: Deploy to Railway
+
+**Backend:**
 ```bash
-# Test authentication endpoints
-powershell -ExecutionPolicy Bypass .\test-auth.ps1
+# Install Railway CLI
+npm i -g @railway/cli
 
-# Test Google Pay payment integration  
-powershell -ExecutionPolicy Bypass .\test-payment.ps1
+# Login
+railway login
+
+# Deploy
+railway up
 ```
 
-## Future Enhancements
-- Order tracking map integration
-- User reviews and ratings
-- Loyalty points system
-- Multiple payment gateway options
-- SMS notifications
-- Admin analytics dashboard
-- Promo codes and discounts
-- Multi-language support
+### Post-Deployment Checklist
 
-## License
-This project is open-source and available under the MIT License.
+- [ ] Update `VITE_API_URL` in Vercel with your Render backend URL
+- [ ] Update `FRONTEND_URL` in Render with your Vercel frontend URL
+- [ ] Test user registration and login
+- [ ] Test pizza customization and ordering
+- [ ] Verify email notifications work
+- [ ] Test admin dashboard access
+- [ ] Check real-time order updates
 
-## Support
-For issues and questions, please create an issue in the repository.
+### Free Tier Limitations
+
+**Vercel (Free):**
+- ✅ Unlimited deployments
+- ✅ Custom domains
+- ⚠️ 100GB bandwidth/month
+- ⚠️ Functions timeout: 10s
+
+**Render (Free):**
+- ✅ 750 hours/month
+- ⚠️ Spins down after 15 min inactivity
+- ⚠️ Takes 30-60s to wake up
+- ⚠️ 512MB RAM
+
+**MongoDB Atlas (Free):**
+- ✅ 512MB storage
+- ✅ Shared cluster
+- ⚠️ Limited to 100 connections
+
+---
+
+## Testing
+
+Test the application locally before deploying:
+
+```bash
+# Backend
+cd backend
+npm test
+
+# Frontend  
+cd frontend
+npm run build
+npm run preview
+```
+
+## 📱 Screenshots
+
+> Add screenshots of your application here after deployment
+
+## 🎯 Future Enhancements
+- 📍 Order tracking map integration with live location
+- ⭐ User reviews and ratings system
+- 🎁 Loyalty points and rewards program
+- 💳 Multiple payment gateway options (Stripe, PayPal)
+- 📱 SMS notifications for order updates
+- 📊 Advanced admin analytics dashboard
+- 🏷️ Promo codes and discount system
+- 🌍 Multi-language support (i18n)
+- 🖼️ Image upload for custom pizzas
+- 📧 Email marketing integration
+
+## 📝 License
+This project is created for educational purposes as part of the Oasis Infobyte Internship program.
+
+## 👨‍💻 Author
+
+**Abhishek Dhaundiyal**
+- GitHub: [@Lucky2907](https://github.com/Lucky2907)
+- Email: dhaundiyalabhishek634@gmail.com
+- Repository: [OIB-SIP](https://github.com/Lucky2907/OIB-SIP)
+
+## 🙏 Acknowledgments
+
+- **Oasis Infobyte** for the internship opportunity
+- **MongoDB Atlas** for database hosting
+- **Vite** for lightning-fast development experience
+- **Tailwind CSS** for beautiful, responsive styling
+- **Framer Motion** for smooth animations
+- **Socket.io** for real-time features
+- Open-source community for amazing tools and libraries
+
+## 📞 Support
+
+For issues, questions, or suggestions:
+- 🐛 [Create an Issue](https://github.com/Lucky2907/OIB-SIP/issues)
+- 💬 [Start a Discussion](https://github.com/Lucky2907/OIB-SIP/discussions)
+- ⭐ Star this repo if you found it helpful!
+
+---
+
+<div align="center">
+
+**Made with ❤️ and 🍕 by Abhishek Dhaundiyal**
+
+⭐ Star this repository if you found it helpful!
+
+[![GitHub stars](https://img.shields.io/github/stars/Lucky2907/OIB-SIP?style=social)](https://github.com/Lucky2907/OIB-SIP/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Lucky2907/OIB-SIP?style=social)](https://github.com/Lucky2907/OIB-SIP/network/members)
+
+</div>
