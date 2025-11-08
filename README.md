@@ -6,7 +6,7 @@ A modern, full-stack MERN (MongoDB, Express, React, Node.js) pizza ordering appl
 
 ### 🌐 Deployed Application
 
-**Frontend:** https://pizza-ij1p4jyxd-dhaundiyalabhishek634-gmailcoms-projects.vercel.app
+**Frontend:** https://oib-3siz1r4o3-dhaundiyalabhishek634-gmailcoms-projects.vercel.app
 
 **Backend API:** https://oib-sip.onrender.com
 
