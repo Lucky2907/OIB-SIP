@@ -19,6 +19,7 @@ export const AuthProvider = ({ children }) => {
         const response = await api.get('/auth/me');
         setUser(response.data.data);
       } catch (error) {
+        console.error('Auth check failed:', error);
         localStorage.removeItem('token');
       }
     }
