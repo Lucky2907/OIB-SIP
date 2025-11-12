@@ -14,16 +14,29 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const response = await api.get('/auth/me');
-        setUser(response.data.data);
-      } catch (error) {
-        console.error('Auth check failed:', error);
-        localStorage.removeItem('token');
-      }
+    
+    if (!token) {
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    try {
+      // Race between API call and timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Auth check timeout')), 2000)
+      );
+      
+      const apiPromise = api.get('/auth/me');
+      
+      const response = await Promise.race([apiPromise, timeoutPromise]);
+      setUser(response.data.data);
+    } catch (error) {
+      console.error('Auth check failed:', error.message || error);
+      localStorage.removeItem('token');
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const register = async (userData) => {
