@@ -8,6 +8,7 @@ import './styles/App.css';
 import Navbar from './components/Navbar.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Cart from './components/Cart.jsx';
+import Chatbot from './components/Chatbot.jsx';
 
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -118,6 +119,7 @@ function App() {
               />
             </Routes>
             </div>
+            <Chatbot />
           </div>
         </Router>
       </CartProvider>
