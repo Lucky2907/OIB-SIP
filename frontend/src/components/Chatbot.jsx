@@ -21,8 +21,12 @@ const Chatbot = () => {
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
-  const { user } = useContext(AuthContext);
-  const { cart } = useContext(CartContext);
+  
+  // Safe context usage with fallbacks
+  const authContext = useContext(AuthContext);
+  const cartContext = useContext(CartContext);
+  const user = authContext?.user || null;
+  const cart = cartContext?.cart || [];
 
   // Hide chatbot on auth pages
   const hideOnPages = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
