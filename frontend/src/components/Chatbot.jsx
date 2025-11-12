@@ -1,7 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MessageCircle, X, Send, Pizza, ShoppingCart, User, HelpCircle } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
+import { CartContext } from '../context/CartContext';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 
 const Chatbot = () => {
@@ -14,13 +17,33 @@ const Chatbot = () => {
     }
   ]);
   const [input, setInput] = useState('');
+  const [orders, setOrders] = useState([]);
   const messagesEndRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useContext(AuthContext);
+  const { cart } = useContext(CartContext);
 
   // Hide chatbot on auth pages
   const hideOnPages = ['/login', '/register', '/forgot-password', '/reset-password', '/verify-email'];
   const shouldHide = hideOnPages.some(page => location.pathname.startsWith(page));
+
+  // Fetch user orders
+  const fetchOrders = async () => {
+    if (!user) return;
+    try {
+      const response = await api.get('/orders/my-orders');
+      setOrders(response.data.data || []);
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (user && isOpen) {
+      fetchOrders();
+    }
+  }, [user, isOpen]);
 
   if (shouldHide) {
     return null; // Don't render chatbot on auth pages
@@ -80,13 +103,39 @@ const Chatbot = () => {
 
     // Cart
     if (knowledgeBase.cart.some(word => message.includes(word))) {
-      return "🛒 To view your cart:\n\n• Click the cart icon in the top-right corner\n• Review your items\n• Proceed to checkout with Google Pay\n\nYour cart is always saved!";
+      if (cart && cart.length > 0) {
+        const cartTotal = cart.reduce((sum, item) => sum + item.totalPrice, 0);
+        const cartItems = cart.map((item, i) => 
+          `${i + 1}. ${item.name} - ₹${item.totalPrice}`
+        ).join('\n');
+        
+        return `🛒 Your Cart (${cart.length} items):\n\n${cartItems}\n\n💰 Total: ₹${cartTotal}\n\nClick the cart icon in the top-right to checkout!`;
+      } else {
+        return "🛒 Your cart is empty!\n\n• Browse our delicious pizzas\n• Customize your favorite\n• Add to cart\n\nStart ordering now! 🍕";
+      }
     }
 
     // Orders
     if (knowledgeBase.orders.some(word => message.includes(word))) {
-      setTimeout(() => navigate('/my-orders'), 1500);
-      return "📦 You can track all your orders in the 'My Orders' section!\n\n• See order status\n• Real-time tracking\n• Order history\n\nTaking you there now...";
+      if (!user) {
+        setTimeout(() => navigate('/login'), 1500);
+        return "� Please login to view your orders!\n\nRedirecting you to login page...";
+      }
+      
+      if (orders && orders.length > 0) {
+        const recentOrders = orders.slice(0, 3).map((order, i) => {
+          const statusEmoji = order.status === 'delivered' ? '✅' : 
+                             order.status === 'preparing' ? '👨‍🍳' : 
+                             order.status === 'out-for-delivery' ? '🚚' : '⏳';
+          return `${statusEmoji} Order #${order._id.slice(-6)}\n   Status: ${order.status}\n   Total: ₹${order.totalAmount}\n   Items: ${order.items?.length || 0}`;
+        }).join('\n\n');
+        
+        setTimeout(() => navigate('/my-orders'), 1500);
+        return `📦 Your Recent Orders:\n\n${recentOrders}\n\nTaking you to My Orders page for full details...`;
+      } else {
+        setTimeout(() => navigate('/dashboard'), 1500);
+        return "📦 You haven't placed any orders yet!\n\n🍕 Ready to order your first pizza?\n\nLet me take you to our menu...";
+      }
     }
 
     // Account
@@ -160,8 +209,25 @@ const Chatbot = () => {
       default:
         message = 'Help';
     }
-    setInput(message);
-    handleSendMessage();
+
+    // Send message directly instead of setting input
+    const userMessage = {
+      type: 'user',
+      text: message,
+      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    // Simulate bot typing
+    setTimeout(() => {
+      const botResponse = {
+        type: 'bot',
+        text: getBotResponse(message),
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      };
+      setMessages(prev => [...prev, botResponse]);
+    }, 500);
   };
 
   return (
