@@ -1,7 +1,8 @@
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
+import { X, ShoppingCart, Plus, Minus, Trash2, Tag, Sparkles } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import api from '../utils/api';
 
@@ -17,6 +18,42 @@ const Cart = () => {
   } = useCart();
   
   const navigate = useNavigate();
+  const [discount, setDiscount] = useState(null);
+
+  // Check for spin wheel discount on mount and when cart opens
+  useEffect(() => {
+    if (isCartOpen) {
+      const savedDiscount = localStorage.getItem('spinWheelDiscount');
+      if (savedDiscount) {
+        try {
+          const discountData = JSON.parse(savedDiscount);
+          setDiscount(discountData);
+        } catch (e) {
+          console.error('Error parsing discount:', e);
+        }
+      }
+    }
+  }, [isCartOpen]);
+
+  const calculateDiscount = () => {
+    if (!discount) return 0;
+    
+    const subtotal = getCartTotal();
+    
+    if (discount.type === 'percentage') {
+      return (subtotal * discount.value) / 100;
+    } else if (discount.type === 'delivery') {
+      // Free delivery - assume delivery charge is ₹50
+      return 50;
+    }
+    return 0;
+  };
+
+  const getFinalTotal = () => {
+    const subtotal = getCartTotal();
+    const discountAmount = calculateDiscount();
+    return Math.max(0, subtotal - discountAmount);
+  };
 
   const handleCheckout = async () => {
     if (cart.length === 0) return;
@@ -27,7 +64,7 @@ const Cart = () => {
     }
 
     try {
-      const totalAmount = getCartTotal();
+      const totalAmount = getFinalTotal(); // Use discounted total
       
       const paymentsClient = new window.google.payments.api.PaymentsClient({ environment: 'TEST' });
 
@@ -97,6 +134,10 @@ const Cart = () => {
       });
 
       await Promise.all(orderPromises);
+      
+      // Clear discount after successful payment
+      localStorage.removeItem('spinWheelDiscount');
+      setDiscount(null);
       
       toast.success('🎉 Payment Successful! Your orders have been placed.');
       clearCart();
@@ -239,12 +280,56 @@ const Cart = () => {
             {/* Footer */}
             {cart.length > 0 && (
               <div className="border-t border-gray-200 p-6 bg-gray-50 space-y-4">
-                {/* Total */}
-                <div className="flex items-center justify-between text-lg font-semibold">
-                  <span className="text-gray-700">Total</span>
-                  <span className="text-2xl text-primary-600">
-                    ₹{getCartTotal().toFixed(2)}
-                  </span>
+                {/* Price Breakdown */}
+                <div className="space-y-3">
+                  {/* Subtotal */}
+                  <div className="flex items-center justify-between text-gray-700">
+                    <span>Subtotal</span>
+                    <span className="font-medium">₹{getCartTotal().toFixed(2)}</span>
+                  </div>
+
+                  {/* Discount Display */}
+                  {discount && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-lg p-3 space-y-2"
+                    >
+                      <div className="flex items-center gap-2 text-green-700 font-semibold">
+                        <Sparkles className="w-4 h-4" />
+                        <span>Spin Wheel Reward Applied!</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-green-600">
+                          <Tag className="w-4 h-4" />
+                          <span className="text-sm">
+                            {discount.type === 'percentage' 
+                              ? `${discount.value}% OFF`
+                              : discount.type === 'delivery'
+                              ? 'FREE DELIVERY'
+                              : `${discount.value} Coins`
+                            }
+                          </span>
+                        </div>
+                        <span className="font-bold text-green-700">
+                          - ₹{calculateDiscount().toFixed(2)}
+                        </span>
+                      </div>
+                      <div className="text-xs text-green-600 font-medium">
+                        🎉 You saved ₹{calculateDiscount().toFixed(2)}!
+                      </div>
+                    </motion.div>
+                  )}
+
+                  {/* Divider */}
+                  <div className="border-t border-gray-300 pt-3">
+                    <div className="flex items-center justify-between text-lg font-semibold">
+                      <span className="text-gray-700">Total</span>
+                      <span className="text-2xl text-primary-600">
+                        ₹{getFinalTotal().toFixed(2)}
+                      </span>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Buttons */}

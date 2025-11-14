@@ -2,13 +2,17 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext.jsx';
 import { CartProvider } from './context/CartContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 import { Toaster } from 'react-hot-toast';
+import { motion } from 'framer-motion';
+import { Gift } from 'lucide-react';
 import './styles/App.css';
 
 import Navbar from './components/Navbar.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
 import Cart from './components/Cart.jsx';
 import Chatbot from './components/Chatbot.jsx';
+import SpinWheel from './components/SpinWheel.jsx';
 
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
@@ -35,14 +39,23 @@ const HomeRedirect = () => {
 };
 
 function App() {
+  const [showSpinWheel, setShowSpinWheel] = React.useState(false);
+  const [discount, setDiscount] = React.useState(null);
+
+  const handleWinDiscount = (discountData) => {
+    setDiscount(discountData);
+    localStorage.setItem('spinWheelDiscount', JSON.stringify(discountData));
+  };
+
   return (
-    <AuthProvider>
-      <CartProvider>
-        <Router>
-          <div className="App">
-            <Navbar />
-            <Cart />
-            <Toaster 
+    <ThemeProvider>
+      <AuthProvider>
+        <CartProvider>
+          <Router>
+            <div className="App bg-white dark:bg-gray-900 min-h-screen transition-colors">
+              <Navbar />
+              <Cart />
+              <Toaster 
               position="top-right"
               toastOptions={{
                 duration: 3000,
@@ -120,10 +133,45 @@ function App() {
             </Routes>
             </div>
             <Chatbot />
+            <SpinWheel 
+              isOpen={showSpinWheel} 
+              onClose={() => setShowSpinWheel(false)}
+              onWinDiscount={handleWinDiscount}
+            />
+            
+            {/* Floating Spin Wheel Button */}
+            <AuthContext.Consumer>
+              {({ user }) => user && (
+                <motion.button
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  onClick={() => setShowSpinWheel(true)}
+                  className="fixed bottom-24 right-6 z-40 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full shadow-2xl hover:shadow-purple-500/50 transition-all duration-300"
+                  title="Spin & Win!"
+                >
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <Gift size={28} />
+                  </motion.div>
+                  <motion.span
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full"
+                  >
+                    WIN
+                  </motion.span>
+                </motion.button>
+              )}
+            </AuthContext.Consumer>
           </div>
         </Router>
       </CartProvider>
     </AuthProvider>
+    </ThemeProvider>
   );
 }
 
